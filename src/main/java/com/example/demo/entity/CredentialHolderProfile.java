@@ -4,10 +4,13 @@ import java.time.LocalDateTime;
 
 public class CredentialHolderProfile {
     @Id
-    @GeneratedValue(strategy = GeneratedType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(unique = true)
     private String holderId;
     private String fullName;
+    @Email 
+    @Column(unique = true)
     private String email;
     private String organization;
     private boolean active;

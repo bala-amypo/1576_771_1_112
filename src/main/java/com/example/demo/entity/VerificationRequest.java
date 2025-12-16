@@ -7,6 +7,7 @@ public class VerificationRequest {
     private String requestedBy;
     private String verificationMethod;
     private String status;
-    
+    private LocalDateTime verifiedAt;
+    private String resultMessage;
 
 }

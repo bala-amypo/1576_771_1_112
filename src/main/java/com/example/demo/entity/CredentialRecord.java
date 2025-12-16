@@ -3,6 +3,8 @@ package com.example.demo.entity;
 import java.time.LocalDate;
 
 public class CredentialRecord {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private long holderId;
     private String credentialCode;

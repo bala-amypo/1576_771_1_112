@@ -2,33 +2,40 @@ package com.example.demo.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class CredentialRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private long holderId;
+    @Column(unique = true)
     private String credentialCode;
     private String title;
     private String issuer;
-    private LocalDate issueDate;
+    private LocalDate issuedDate;
     private LocalDate expiryDate;
     private String credentialType;
     private String status;
     private String metadataJson;
 
-    public CredentialRecord(){}
+    public CredentialRecord() {}
 
-    public CredentialRecord(long holderId, String credentialCode, String title, String issuer, LocalDate issueDate,
-            LocalDate expiryDate, String credentialType, String status, String metadataJson) {
-        this.holderId = holderId;
+    public CredentialRecord(String credentialCode, String credentialType, LocalDate expiryDate, long holderId, LocalDate issuedDate, String issuer, String metadataJson, String status, String title) {
         this.credentialCode = credentialCode;
-        this.title = title;
-        this.issuer = issuer;
-        this.issueDate = issueDate;
-        this.expiryDate = expiryDate;
         this.credentialType = credentialType;
-        this.status = status;
+        this.expiryDate = expiryDate;
+        this.holderId = holderId;
+        this.issuedDate = issuedDate;
+        this.issuer = issuer;
         this.metadataJson = metadataJson;
+        this.status = status;
+        this.title = title;
     }
 
     public long getId() {
@@ -51,8 +58,8 @@ public class CredentialRecord {
         return issuer;
     }
 
-    public LocalDate getIssueDate() {
-        return issueDate;
+    public LocalDate getIssuedDate() {
+        return issuedDate;
     }
 
     public LocalDate getExpiryDate() {
@@ -91,8 +98,8 @@ public class CredentialRecord {
         this.issuer = issuer;
     }
 
-    public void setIssueDate(LocalDate issueDate) {
-        this.issueDate = issueDate;
+    public void setIssuedDate(LocalDate issuedDate) {
+        this.issuedDate = issuedDate;
     }
 
     public void setExpiryDate(LocalDate expiryDate) {
@@ -111,5 +118,5 @@ public class CredentialRecord {
         this.metadataJson = metadataJson;
     }
 
-    
+
 }

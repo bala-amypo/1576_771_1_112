@@ -1,22 +1,31 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class VerificationRule {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(unique = true)
     private String ruleCode;
     private String description;
     private String appliesToType;
     private String validationExpression;
     private boolean active;
 
-    public VerificationRule(){}
+    public VerificationRule() {}
 
-    public VerificationRule(String ruleCode, String description, String appliesToType, String validationExpression,
-            boolean active) {
-        this.ruleCode = ruleCode;
-        this.description = description;
-        this.appliesToType = appliesToType;
-        this.validationExpression = validationExpression;
+    public VerificationRule(boolean active, String appliesToType, String description, String ruleCode, String validationExpression) {
         this.active = active;
+        this.appliesToType = appliesToType;
+        this.description = description;
+        this.ruleCode = ruleCode;
+        this.validationExpression = validationExpression;
     }
 
     public long getId() {
@@ -67,6 +76,5 @@ public class VerificationRule {
         this.active = active;
     }
 
-    
 
 }

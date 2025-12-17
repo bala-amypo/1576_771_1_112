@@ -1,12 +1,12 @@
-package com.example.demo.service;
+// package com.example.demo.service;
 
-import java.util.List;
+// import java.util.List;
 
-import com.example.demo.entity.VerificationRule;
+// import com.example.demo.entity.VerificationRule;
 
-public interface VerificationRuleService {
-    VerificationRule createRule(VerificationRule rule);
-    Object updateRule(Long id, VerificationRule updatedRule);
-    List<VerificationRule> getActiveRules();
-    List<VerificationRule> getAllRules();
-}
+// public interface VerificationRuleService {
+//     VerificationRule createRule(VerificationRule rule);
+//     Object updateRule(Long id, VerificationRule updatedRule);
+//     List<VerificationRule> getActiveRules();
+//     List<VerificationRule> getAllRules();
+// }

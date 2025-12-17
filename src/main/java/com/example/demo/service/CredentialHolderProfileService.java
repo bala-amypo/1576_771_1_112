@@ -8,5 +8,5 @@ public interface CredentialHolderProfileService {
     CredentialHolderProfile getHolderById(Long id);
     List<CredentialHolderProfile> getAllHolders();
     boolean findByHolderId(String holderId);
-    Object updateHolderStatus(Long id, boolean active);
+    CredentialHolderProfile updateHolderStatus(Long id, boolean active);
 }

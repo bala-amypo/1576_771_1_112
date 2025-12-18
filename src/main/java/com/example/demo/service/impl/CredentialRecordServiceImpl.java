@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.CredentialRecord;
 import com.example.demo.exception.BadRequestException;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CredentialRecordServiceImpl implements CredentialRecordService {
 
     private final CredentialRecordRepository credentialRepo;
@@ -74,5 +76,10 @@ public class CredentialRecordServiceImpl implements CredentialRecordService {
     @Override
     public CredentialRecord getCredentialByCode(String code){
         return credentialRepo.findByCredentialCode(code).orElse(null);
+    }
+
+    @Override
+    public List<CredentialRecord> getAllCredentials(){
+        return credentialRepo.findAll();
     }
 }

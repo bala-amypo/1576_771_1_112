@@ -30,15 +30,18 @@ public class CredentialHolderProfileServiceImpl implements CredentialHolderProfi
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Holder not found"));
     }
+    
+
 
     @Override
     public List<CredentialHolderProfile> getAllHolders(){
         return repo.findAll();
     }
 
+    
     @Override
-    public boolean existsHolderByHolderId(Long holderId){
-        return repo.findByHolderId(holderId).isPresent();
+    public boolean existsHolderByHolderId(String holderId){
+    return repo.findByHolderId(holderId).isPresent();
     }
 
     @Override

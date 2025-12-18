@@ -8,8 +8,7 @@ import com.example.demo.entity.CredentialHolderProfile;
 
 public interface CredentialHolderProfileRepository extends JpaRepository<CredentialHolderProfile, Long> {
 
-    Optional<CredentialHolderProfile> findByHolderId(Long holderId);
+    Optional<CredentialHolderProfile> findByHolderId(String holderId);
 
     boolean existsByEmail(String email);
-
 }

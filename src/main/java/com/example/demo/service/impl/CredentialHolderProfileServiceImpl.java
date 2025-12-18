@@ -14,8 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CredentialHolderProfileServiceImpl
-        implements CredentialHolderProfileService {
+public class CredentialHolderProfileServiceImpl implements CredentialHolderProfileService {
 
     private final CredentialHolderProfileRepository repo;
 

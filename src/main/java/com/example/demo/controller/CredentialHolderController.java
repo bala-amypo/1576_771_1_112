@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.entity.CredentialHolderProfile;
 import com.example.demo.service.CredentialHolderProfileService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,15 +19,13 @@ public class CredentialHolderController {
     private final CredentialHolderProfileService service;
 
     @PostMapping
-    public ResponseEntity<CredentialHolderProfile> create(
-            @RequestBody CredentialHolderProfile profile) {
+    public ResponseEntity<CredentialHolderProfile> create( @Valid @RequestBody CredentialHolderProfile profile) {
 
         return ResponseEntity.status(201).body(service.createHolder(profile));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CredentialHolderProfile> getById(
-            @PathVariable Long id){
+    public ResponseEntity<CredentialHolderProfile> getById( @PathVariable Long id){
 
         return ResponseEntity.ok(service.getHolderById(id));
     }
@@ -38,9 +37,7 @@ public class CredentialHolderController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<CredentialHolderProfile> updateStatus(
-            @PathVariable Long id,
-            @RequestParam boolean active){
+    public ResponseEntity<CredentialHolderProfile> updateStatus( @PathVariable Long id,@Valid @RequestParam boolean active){
 
         return ResponseEntity.ok(service.updateHolderStatus(id, active));
     }

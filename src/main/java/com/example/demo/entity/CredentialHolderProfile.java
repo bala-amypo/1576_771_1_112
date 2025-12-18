@@ -28,9 +28,7 @@ public class CredentialHolderProfile {
 
     public CredentialHolderProfile(){}
 
-    public CredentialHolderProfile(String holderId, String fullName,
-                                   String email, String organization,
-                                   boolean active) {
+    public CredentialHolderProfile(String holderId, String fullName, String email, String organization, boolean active) {
         this.holderId = holderId;
         this.fullName = fullName;
         this.email = email;

@@ -40,5 +40,13 @@ public class CredentialRecordController {
                 ResponseEntity.notFound().build() :
                 ResponseEntity.ok(rec);
     }
-    
+
+    @GetMapping
+    public ResponseEntity<List<CredentialRecord>> getAll(){
+        List<CredentialRecord> records = service.getCredentialsByHolder(null);
+        if(records.isEmpty())
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(records);
+    }
 }

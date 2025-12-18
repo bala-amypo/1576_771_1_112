@@ -11,12 +11,12 @@ import com.example.demo.entity.CredentialRecord;
 
 public interface CredentialRecordRepository extends JpaRepository<CredentialRecord, Long> {
 
-
     List<CredentialRecord> findByHolderId(Long holderId);
 
     Optional<CredentialRecord> findByCredentialCode(String credentialCode);
 
-    List<CredentialRecord> findExpiredBefore(LocalDate date);
+    
+    List<CredentialRecord> findByExpiryDateBefore(LocalDate date);
 
     //====================== Custom Queries ======================
 

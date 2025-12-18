@@ -38,7 +38,7 @@ public class CredentialHolderProfileServiceImpl
     }
 
     @Override
-    public boolean existsHolderByHolderId(String holderId){
+    public boolean existsHolderByHolderId(Long holderId){
         return repo.findByHolderId(holderId).isPresent();
     }
 

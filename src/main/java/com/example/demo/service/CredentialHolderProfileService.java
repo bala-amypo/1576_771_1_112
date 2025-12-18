@@ -9,6 +9,6 @@ public interface CredentialHolderProfileService {
     CredentialHolderProfile createHolder(CredentialHolderProfile profile);
     CredentialHolderProfile getHolderById(Long id);
     List<CredentialHolderProfile> getAllHolders();
-    boolean existsHolderByHolderId(String holderId);
+    boolean existsHolderByHolderId(Long holderId);
     CredentialHolderProfile updateHolderStatus(Long id, boolean active);
 }

@@ -1,49 +1,46 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.AuditTrailRecord;
 import com.example.demo.service.AuditTrailService;
 
-import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/audit")
-public class AuditTrailController {
+@RequiredArgsConstructor
+public class AuditTrailRecordController {
 
-    @Autowired
-    AuditTrailService auditTrailService;
+    private final AuditTrailService auditService;
 
     @PostMapping
-    public ResponseEntity<AuditTrailRecord> logAuditEvent(@Valid @RequestBody AuditTrailRecord record) {
-        AuditTrailRecord loggedRecord = auditTrailService.logEvent(record);
-        return ResponseEntity.status(201).body(loggedRecord);
+    public ResponseEntity<AuditTrailRecord> log(@RequestBody AuditTrailRecord record){
+        return ResponseEntity.status(201).body(auditService.logEvent(record));
     }
 
     @GetMapping("/credential/{credentialId}")
-    public ResponseEntity<AuditTrailRecord> getAuditTrailByCredentialId(@PathVariable Long credentialId) {
-        Optional<AuditTrailRecord> record = auditTrailService.getLogsByCredential(credentialId);
-        if(record.isPresent()) {
-            return ResponseEntity.status(200).body(record.get());
-        } else {
-            return ResponseEntity.status(404).build();
-        }
+    public ResponseEntity<List<AuditTrailRecord>> getAuditTrailByCredentialId(
+            @PathVariable Long credentialId) {
+
+        List<AuditTrailRecord> logs = auditService.getLogsByCredential(credentialId);
+
+        if(logs.isEmpty())
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(logs);
     }
 
     @GetMapping
-    public ResponseEntity<List<AuditTrailRecord>> getAllAuditTrails() {
-        List<AuditTrailRecord> records = auditTrailService.getAllLogs();
-        return ResponseEntity.status(200).body(records);
-    }
+    public ResponseEntity<List<AuditTrailRecord>> getAll(){
+        List<AuditTrailRecord> logs = auditService.getAllLogs();
 
+        if(logs.isEmpty())
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(logs);
+    }
 }

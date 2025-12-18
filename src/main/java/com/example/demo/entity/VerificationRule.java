@@ -3,17 +3,14 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(
-    name = "verification_rules",
-    uniqueConstraints = @UniqueConstraint(columnNames = "ruleCode")
-)
+@Table(name = "verification_rules")
 public class VerificationRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false , unique  = true)
     private String ruleCode;
 
     private String description;

@@ -31,7 +31,7 @@ public class CredentialRecord {
     @Column(columnDefinition = "TEXT")
     private String metadataJson;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(
         name = "credential_rule_map",
         joinColumns = @JoinColumn(name = "credential_id"),

@@ -34,8 +34,8 @@ public class CredentialRecordController {
     }
 
     @GetMapping("/code/{credentialCode}")
-    public ResponseEntity<CredentialRecord> getByCode(@PathVariable String credCode){
-        CredentialRecord rec = service.getCredentialByCode(credCode);
+    public ResponseEntity<CredentialRecord> getByCode(@PathVariable String credentialCode){
+        CredentialRecord rec = service.getCredentialByCode(credentialCode);
         return (rec == null) ?
                 ResponseEntity.notFound().build() :
                 ResponseEntity.ok(rec);
@@ -43,10 +43,9 @@ public class CredentialRecordController {
 
     @GetMapping
     public ResponseEntity<List<CredentialRecord>> getAll(){
-        List<CredentialRecord> records = service.getCredentialsByHolder(null);
-        if(records.isEmpty())
-            return ResponseEntity.noContent().build();
-
-        return ResponseEntity.ok(records);
+        List<CredentialRecord> records = service.getAllCredentials();
+        return records.isEmpty() ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.ok(records);
     }
 }

@@ -2,24 +2,27 @@ package com.example.demo.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.entity.CredentialRecord;
+import com.example.demo.entity.VerificationRule;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.CredentialRecordRepository;
+import com.example.demo.repository.VerificationRuleRepository;
 import com.example.demo.service.CredentialRecordService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class CredentialRecordServiceImpl implements CredentialRecordService {
 
     private final CredentialRecordRepository credentialRepo;
+    private final VerificationRuleRepository ruleRepo;
 
     @Override
     public CredentialRecord createCredential(CredentialRecord record) {
@@ -32,7 +35,6 @@ public class CredentialRecordServiceImpl implements CredentialRecordService {
 
         if(record.getExpiryDate() != null &&
            record.getExpiryDate().isBefore(LocalDate.now())) {
-
             record.setStatus("EXPIRED");
         }
         else {
@@ -43,6 +45,23 @@ public class CredentialRecordServiceImpl implements CredentialRecordService {
         if(record.getMetadataJson() != null &&
            !record.getMetadataJson().trim().startsWith("{"))
             throw new BadRequestException("metadataJson must start with '{'");
+
+        if(record.getRules() != null){
+            Set<VerificationRule> dbRules = record.getRules().stream()
+                    .map(r -> {
+
+                        VerificationRule rule = ruleRepo.findById(r.getId())
+                                .orElseThrow(() -> new BadRequestException("Rule not found"));
+
+                        if(!rule.isActive())
+                            throw new BadRequestException("Cannot attach inactive rules");
+
+                        return rule;
+
+                    }).collect(Collectors.toSet());
+
+            record.setRules(dbRules);
+        }
 
         return credentialRepo.save(record);
     }
@@ -60,9 +79,25 @@ public class CredentialRecordServiceImpl implements CredentialRecordService {
         existing.setExpiryDate(update.getExpiryDate());
         existing.setMetadataJson(update.getMetadataJson());
 
-        if(existing.getExpiryDate() != null &&
-           existing.getExpiryDate().isBefore(LocalDate.now())) {
+        if(update.getExpiryDate() != null &&
+           update.getExpiryDate().isBefore(LocalDate.now())) {
             existing.setStatus("EXPIRED");
+        }
+
+        if(update.getRules() != null){
+            Set<VerificationRule> attached =
+                    update.getRules().stream().map(r -> {
+
+                        VerificationRule dbRule = ruleRepo.findById(r.getId())
+                                .orElseThrow(() -> new BadRequestException("Rule not found"));
+
+                        if(!dbRule.isActive())
+                            throw new BadRequestException("Cannot attach inactive rules");
+
+                        return dbRule;
+                    }).collect(Collectors.toSet());
+
+            existing.setRules(attached);
         }
 
         return credentialRepo.save(existing);

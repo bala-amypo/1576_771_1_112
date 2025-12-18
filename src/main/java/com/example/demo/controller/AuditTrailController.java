@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/audit")
 @RequiredArgsConstructor
-public class AuditTrailRecordController {
+public class AuditTrailController {
 
     private final AuditTrailService auditService;
 

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.CredentialRecord;
 import com.example.demo.service.CredentialRecordService;
+import com.example.demo.exception.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,29 +24,34 @@ public class CredentialRecordController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CredentialRecord> update(@PathVariable Long id,
-                                                   @RequestBody CredentialRecord r){
+    public ResponseEntity<CredentialRecord> update(@PathVariable Long id, @RequestBody CredentialRecord r){
         return ResponseEntity.ok(service.updateCredential(id, r));
     }
 
     @GetMapping("/holder/{holderId}")
     public ResponseEntity<List<CredentialRecord>> getByHolder(@PathVariable Long holderId){
-        return ResponseEntity.ok(service.getCredentialsByHolder(holderId));
+        List<CredentialRecord> list = service.getCredentialsByHolder(holderId);
+        if(list == null || list.isEmpty()) {
+            throw new ResourceNotFoundException("No credentials found for holder: " + holderId);
+        }
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/code/{credentialCode}")
     public ResponseEntity<CredentialRecord> getByCode(@PathVariable String credentialCode){
         CredentialRecord rec = service.getCredentialByCode(credentialCode);
-        return (rec == null) ?
-                ResponseEntity.notFound().build() :
-                ResponseEntity.ok(rec);
+        if (rec == null) {
+            throw new ResourceNotFoundException("Credential not found for code: " + credentialCode);
+        }
+        return ResponseEntity.ok(rec);
     }
 
     @GetMapping
     public ResponseEntity<List<CredentialRecord>> getAll(){
         List<CredentialRecord> records = service.getAllCredentials();
-        return records.isEmpty() ?
-                ResponseEntity.noContent().build() :
-                ResponseEntity.ok(records);
+        if(records == null || records.isEmpty()){
+            throw new ResourceNotFoundException("No credentials found");
+        }
+        return ResponseEntity.ok(records);
     }
 }

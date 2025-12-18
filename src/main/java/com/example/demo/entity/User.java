@@ -28,6 +28,13 @@ public class User {
         this.role = role;
     }
 
+    @PrePersist
+    protected void onCreate() {
+        if (!role.equals("ADMIN") && !role.equals("EDITOR") && !role.equals("VIEWER")) {
+            role = "VIEWER";
+        }
+    }
+
     public Long getId(){ return id; }
     public String getFullName(){ return fullName; }
     public String getEmail(){ return email; }

@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class CredentialHolderProfileServiceImpl
 
     @Override
     public CredentialHolderProfile createHolder(CredentialHolderProfile profile){
-        profile.setCreatedAt(java.time.LocalDateTime.now());
+        profile.setCreatedAt(LocalDateTime.now());
         return repo.save(profile);
     }
 

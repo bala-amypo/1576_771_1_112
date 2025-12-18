@@ -9,5 +9,4 @@ public interface AuditTrailRecordRepository
         extends JpaRepository<AuditTrailRecord, Long> {
 
     List<AuditTrailRecord> findByCredentialId(Long credentialId);
-
 }

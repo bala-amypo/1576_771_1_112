@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> loginUser(@Valid @RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<User> loginUser(@Valid @RequestParam String email, @Valid @RequestParam String password) {
         User user = userService.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
             return ResponseEntity.status(200).body(user);

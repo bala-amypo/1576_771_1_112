@@ -33,11 +33,12 @@ public class CredentialRecordController {
         return ResponseEntity.ok(service.getCredentialsByHolder(holderId));
     }
 
-    @GetMapping("/code/{code}")
-    public ResponseEntity<CredentialRecord> getByCode(@PathVariable String code){
-        CredentialRecord rec = service.getCredentialByCode(code);
+    @GetMapping("/code/{credentialCode}")
+    public ResponseEntity<CredentialRecord> getByCode(@PathVariable String credCode){
+        CredentialRecord rec = service.getCredentialByCode(credCode);
         return (rec == null) ?
                 ResponseEntity.notFound().build() :
                 ResponseEntity.ok(rec);
     }
+    
 }

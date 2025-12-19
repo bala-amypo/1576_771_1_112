@@ -48,11 +48,19 @@ public class VerificationRuleServiceImpl implements VerificationRuleService {
 
     @Override
     public Optional<VerificationRule> getRuleById(Long id) {
+        boolean exists = ruleRepo.existsById(id);
+        if (!exists) {
+            throw new ResourceNotFoundException("Rule not found");
+        }
         return ruleRepo.findById(id);
     }
 
     @Override
     public List<VerificationRule> getActiveRules() {
+        boolean anyActive = ruleRepo.existsByActiveTrue();
+        if (!anyActive) {
+            throw new ResourceNotFoundException("No active rules found");
+        }
         return ruleRepo.findByActiveTrue();
     }
 

@@ -9,6 +9,6 @@ import com.example.demo.entity.VerificationRule;
 public interface VerificationRuleRepository extends JpaRepository<VerificationRule, Long> {
 
     List<VerificationRule> findByActiveTrue();
-
+    boolean existsByActiveTrue();
     boolean existsByRuleCode(String ruleCode);
 }

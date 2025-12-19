@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.CredentialRecord;
 import com.example.demo.service.CredentialRecordService;
+
+import jakarta.validation.Valid;
+
 import com.example.demo.exception.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -19,12 +22,12 @@ public class CredentialRecordController {
     private final CredentialRecordService service;
 
     @PostMapping
-    public ResponseEntity<CredentialRecord> create(@RequestBody CredentialRecord r){
+    public ResponseEntity<CredentialRecord> create(@Valid @RequestBody CredentialRecord r){
         return ResponseEntity.status(201).body(service.createCredential(r));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CredentialRecord> update(@PathVariable Long id, @RequestBody CredentialRecord r){
+    public ResponseEntity<CredentialRecord> update(@PathVariable Long id, @Valid @RequestBody CredentialRecord r){
         return ResponseEntity.ok(service.updateCredential(id, r));
     }
 

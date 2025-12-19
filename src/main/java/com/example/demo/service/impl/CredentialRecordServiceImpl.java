@@ -33,8 +33,7 @@ public class CredentialRecordServiceImpl implements CredentialRecordService {
         if(credentialRepo.findByCredentialCode(record.getCredentialCode()).isPresent())
             throw new BadRequestException("credentialCode must be unique");
 
-        if(record.getExpiryDate() != null &&
-           record.getExpiryDate().isBefore(LocalDate.now())) {
+        if(record.getExpiryDate() != null && record.getExpiryDate().isBefore(LocalDate.now())) {
             record.setStatus("EXPIRED");
         }
         else {
@@ -42,8 +41,7 @@ public class CredentialRecordServiceImpl implements CredentialRecordService {
                 record.setStatus("VALID");
         }
 
-        if(record.getMetadataJson() != null &&
-           !record.getMetadataJson().trim().startsWith("{"))
+        if(record.getMetadataJson() != null && !record.getMetadataJson().trim().startsWith("{"))
             throw new BadRequestException("metadataJson must start with '{'");
 
         if(record.getRules() != null){

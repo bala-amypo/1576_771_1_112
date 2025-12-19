@@ -6,8 +6,7 @@ import java.util.Set;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "credential_records",
-       uniqueConstraints = @UniqueConstraint(columnNames = "credentialCode"))
+@Table(name = "credential_records")
 public class CredentialRecord {
 
     @Id
@@ -16,7 +15,7 @@ public class CredentialRecord {
 
     private Long holderId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String credentialCode;
 
     private String title;

@@ -27,7 +27,7 @@ public class VerificationRequestServiceImpl
     private final AuditTrailRecordRepository auditRepo;
 
     @Override
-    public VerificationRequest createRequest(VerificationRequest request){
+    public VerificationRequest initiateVerification(VerificationRequest request){
         request.setStatus("PENDING");
         return repo.save(request);
     }

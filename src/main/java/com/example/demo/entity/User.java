@@ -31,7 +31,7 @@ public class User {
 
     @PrePersist
     protected void onCreate() {
-        if (!role.equals("ADMIN") && !role.equals("EDITOR") && !role.equals("VIEWER")) {
+        if (!role.equals("ADMIN") && !role.equals("VERIFIER") && !role.equals("VIEWER")) {
             role = "VIEWER";
         }
     }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.entity.AuditTrailRecord;
 import com.example.demo.service.AuditTrailService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,13 +19,12 @@ public class AuditTrailController {
     private final AuditTrailService auditService;
 
     @PostMapping
-    public ResponseEntity<AuditTrailRecord> log(@RequestBody AuditTrailRecord record){
+    public ResponseEntity<AuditTrailRecord> log(@Valid @RequestBody AuditTrailRecord record){
         return ResponseEntity.status(201).body(auditService.logEvent(record));
     }
 
     @GetMapping("/credential/{credentialId}")
-    public ResponseEntity<List<AuditTrailRecord>> getAuditTrailByCredentialId(
-            @PathVariable Long credentialId) {
+    public ResponseEntity<List<AuditTrailRecord>> getAuditTrailByCredentialId( @PathVariable Long credentialId) {
 
         List<AuditTrailRecord> logs = auditService.getLogsByCredential(credentialId);
 

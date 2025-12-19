@@ -18,12 +18,16 @@ public class AuditTrailRecord {
 
     private LocalDateTime loggedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        loggedAt = LocalDateTime.now();
+    }
+
     public AuditTrailRecord() {}
 
     public AuditTrailRecord(Long credentialId, String action) {
         this.credentialId = credentialId;
         this.action = action;
-        this.loggedAt = LocalDateTime.now();
     }
 
     public Long getId() { return id; }

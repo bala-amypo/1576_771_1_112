@@ -23,7 +23,7 @@ public class VerificationRequestController {
 
         return ResponseEntity
                 .status(201)
-                .body(service.createRequest(request));
+                .body(service.initiateVerification(request));
     }
 
     @GetMapping("/{id}")

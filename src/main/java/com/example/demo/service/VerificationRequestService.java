@@ -6,7 +6,7 @@ import com.example.demo.entity.VerificationRequest;
 
 public interface VerificationRequestService {
 
-    VerificationRequest createRequest(VerificationRequest request);
+    VerificationRequest initiateVerification(VerificationRequest request);
 
     VerificationRequest getRequestById(Long id);
 

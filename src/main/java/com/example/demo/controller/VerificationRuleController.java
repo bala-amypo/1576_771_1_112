@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.entity.VerificationRule;
 import com.example.demo.service.VerificationRuleService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -19,13 +20,13 @@ public class VerificationRuleController {
     private final VerificationRuleService ruleService;
 
     @PostMapping
-    public ResponseEntity<VerificationRule> create(@RequestBody VerificationRule rule) {
+    public ResponseEntity<VerificationRule> create(@Valid @RequestBody VerificationRule rule) {
         VerificationRule created = ruleService.createRule(rule);
         return ResponseEntity.status(201).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VerificationRule> update(@PathVariable Long id, @RequestBody VerificationRule rule) {
+    public ResponseEntity<VerificationRule> update(@PathVariable Long id,@Valid @RequestBody VerificationRule rule) {
         VerificationRule updated = ruleService.updateRule(id, rule);
         return ResponseEntity.status(200).body(updated);
     }

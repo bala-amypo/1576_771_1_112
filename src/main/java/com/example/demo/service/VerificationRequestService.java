@@ -10,7 +10,7 @@ public interface VerificationRequestService {
 
     VerificationRequest getRequestById(Long id);
 
-    List<VerificationRequest> getRequestsByCredential(Long credentialId);
-
     VerificationRequest processVerification(Long requestId);
+
+    List<VerificationRequest> getRequestsByCredential(Long credentialId);
 }

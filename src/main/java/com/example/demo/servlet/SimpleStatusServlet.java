@@ -2,18 +2,17 @@ package com.example.demo.servlet;
 
 import java.io.IOException;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class SimpleStatusServlet extends HttpServlet {
 
+    // ✅ MUST BE PUBLIC (tests call it directly)
     @Override
-    protected void doGet(
+    public void doGet(
             HttpServletRequest req,
-            HttpServletResponse resp)
-            throws ServletException, IOException {
+            HttpServletResponse resp) throws IOException {
 
         resp.getWriter()
             .write("Digital Credential Verification Engine is running");

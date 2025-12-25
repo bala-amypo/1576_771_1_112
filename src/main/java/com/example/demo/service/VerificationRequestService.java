@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 import java.util.List;
-
 import com.example.demo.entity.VerificationRequest;
 
 public interface VerificationRequestService {
@@ -10,7 +9,7 @@ public interface VerificationRequestService {
 
     VerificationRequest getRequestById(Long id);
 
-    VerificationRequest processVerification(Long requestId);
-
     List<VerificationRequest> getRequestsByCredential(Long credentialId);
+
+    VerificationRequest processVerification(Long requestId);
 }

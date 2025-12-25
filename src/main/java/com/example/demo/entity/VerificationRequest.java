@@ -1,8 +1,7 @@
 package com.example.demo.entity;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "verification_requests")
@@ -12,6 +11,7 @@ public class VerificationRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "credential_id", nullable = false)
     private Long credentialId;
 
     private String status;
@@ -19,6 +19,12 @@ public class VerificationRequest {
     private LocalDateTime verifiedAt;
 
     public VerificationRequest() {}
+
+    public VerificationRequest(Long credentialId, String status) {
+        this.credentialId = credentialId;
+        this.status = status;
+        this.verifiedAt = LocalDateTime.now();
+    }
 
     public Long getId() { return id; }
     public Long getCredentialId() { return credentialId; }

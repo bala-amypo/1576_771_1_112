@@ -4,17 +4,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.AuditTrailRecord;
 import com.example.demo.entity.CredentialRecord;
 import com.example.demo.entity.VerificationRequest;
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.AuditTrailRecordRepository;
 import com.example.demo.repository.CredentialRecordRepository;
 import com.example.demo.repository.VerificationRequestRepository;
-import com.example.demo.service.AuditTrailService;
 import com.example.demo.service.VerificationRequestService;
-import com.example.demo.service.VerificationRuleService;
 
 @Service
 public class VerificationRequestServiceImpl
@@ -22,41 +22,23 @@ public class VerificationRequestServiceImpl
 
     private final VerificationRequestRepository requestRepo;
     private final CredentialRecordRepository credentialRepo;
-    private final VerificationRuleService ruleService;
-    private final AuditTrailService auditService;
+    private final AuditTrailRecordRepository auditRepo;
 
-    /* =========================================================
-       Constructor #1 – USED BY SPRING
-       ========================================================= */
+    // ✅ Spring constructor
+    @Autowired
     public VerificationRequestServiceImpl(
             VerificationRequestRepository requestRepo,
             CredentialRecordRepository credentialRepo,
-            VerificationRuleService ruleService,
-            AuditTrailService auditService) {
+            AuditTrailRecordRepository auditRepo) {
 
         this.requestRepo = requestRepo;
         this.credentialRepo = credentialRepo;
-        this.ruleService = ruleService;
-        this.auditService = auditService;
-    }
-
-    /* =========================================================
-       Constructor #2 – REQUIRED BY TESTS (IMPORTANT)
-       ========================================================= */
-    public VerificationRequestServiceImpl(
-            VerificationRequestRepository requestRepo,
-            CredentialRecordServiceImpl credentialServiceImpl,
-            VerificationRuleService ruleService,
-            AuditTrailService auditService) {
-
-        this.requestRepo = requestRepo;
-        this.credentialRepo = credentialServiceImpl.getRepository(); // 🔑
-        this.ruleService = ruleService;
-        this.auditService = auditService;
+        this.auditRepo = auditRepo;
     }
 
     @Override
     public VerificationRequest initiateVerification(VerificationRequest request) {
+        request.setStatus("PENDING");
         return requestRepo.save(request);
     }
 
@@ -77,13 +59,14 @@ public class VerificationRequestServiceImpl
 
         VerificationRequest request = getRequestById(requestId);
 
-        CredentialRecord credential =
-                credentialRepo.findById(request.getCredentialId())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException("Credential not found"));
+        CredentialRecord credential = credentialRepo
+                .findById(request.getCredentialId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Credential not found"));
 
         if (credential.getExpiryDate() != null &&
-            credential.getExpiryDate().isBefore(LocalDate.now())) {
+                credential.getExpiryDate().isBefore(LocalDate.now())) {
+
             request.setStatus("FAILED");
         } else {
             request.setStatus("SUCCESS");
@@ -91,12 +74,12 @@ public class VerificationRequestServiceImpl
 
         request.setVerifiedAt(LocalDateTime.now());
 
-        auditService.logEvent(
-                new AuditTrailRecord(
-                        credential.getId(),
-                        "VERIFICATION_" + request.getStatus()
-                )
+        // ✅ AUDIT LOG (repository-based, test-safe)
+        AuditTrailRecord audit = new AuditTrailRecord(
+                credential.getId(),
+                "Verification processed: " + request.getStatus()
         );
+        auditRepo.save(audit);
 
         return requestRepo.save(request);
     }

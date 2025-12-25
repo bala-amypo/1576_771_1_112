@@ -8,14 +8,15 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.entity.VerificationRequest;
 import com.example.demo.service.VerificationRequestService;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/api/verification")
-@RequiredArgsConstructor
 public class VerificationRequestController {
 
     private final VerificationRequestService service;
+
+    public VerificationRequestController(VerificationRequestService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<VerificationRequest> create(
@@ -26,9 +27,7 @@ public class VerificationRequestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VerificationRequest> getById(
-            @PathVariable Long id) {
-
+    public ResponseEntity<VerificationRequest> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getRequestById(id));
     }
 
@@ -44,7 +43,6 @@ public class VerificationRequestController {
     public ResponseEntity<VerificationRequest> process(
             @PathVariable Long id) {
 
-        return ResponseEntity.ok(
-                service.processVerification(id));
+        return ResponseEntity.ok(service.processVerification(id));
     }
 }

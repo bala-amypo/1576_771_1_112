@@ -20,7 +20,8 @@ public interface CredentialRecordRepository
 
     Optional<CredentialRecord> findByCredentialCode(String credentialCode);
 
-    List<CredentialRecord> findExpiredBefore(LocalDate date);
+    // ✅ FIXED METHOD NAME
+    List<CredentialRecord> findByExpiryDateBefore(LocalDate date);
 
     @Query("SELECT c FROM CredentialRecord c WHERE c.status = :status")
     List<CredentialRecord> findByStatusUsingHql(String status);

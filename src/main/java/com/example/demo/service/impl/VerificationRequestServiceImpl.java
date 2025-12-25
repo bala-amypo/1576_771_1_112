@@ -25,7 +25,9 @@ public class VerificationRequestServiceImpl
     private final VerificationRuleService ruleService;
     private final AuditTrailService auditService;
 
-    // ✅ REQUIRED BY TESTS
+    /* =========================================================
+       Constructor #1 – USED BY SPRING
+       ========================================================= */
     public VerificationRequestServiceImpl(
             VerificationRequestRepository requestRepo,
             CredentialRecordRepository credentialRepo,
@@ -38,6 +40,21 @@ public class VerificationRequestServiceImpl
         this.auditService = auditService;
     }
 
+    /* =========================================================
+       Constructor #2 – REQUIRED BY TESTS (IMPORTANT)
+       ========================================================= */
+    public VerificationRequestServiceImpl(
+            VerificationRequestRepository requestRepo,
+            CredentialRecordServiceImpl credentialServiceImpl,
+            VerificationRuleService ruleService,
+            AuditTrailService auditService) {
+
+        this.requestRepo = requestRepo;
+        this.credentialRepo = credentialServiceImpl.getRepository(); // 🔑
+        this.ruleService = ruleService;
+        this.auditService = auditService;
+    }
+
     @Override
     public VerificationRequest initiateVerification(VerificationRequest request) {
         return requestRepo.save(request);
@@ -46,7 +63,8 @@ public class VerificationRequestServiceImpl
     @Override
     public VerificationRequest getRequestById(Long id) {
         return requestRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Verification request not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Verification request not found"));
     }
 
     @Override
@@ -59,9 +77,10 @@ public class VerificationRequestServiceImpl
 
         VerificationRequest request = getRequestById(requestId);
 
-        CredentialRecord credential = credentialRepo
-                .findById(request.getCredentialId())
-                .orElseThrow(() -> new ResourceNotFoundException("Credential not found"));
+        CredentialRecord credential =
+                credentialRepo.findById(request.getCredentialId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Credential not found"));
 
         if (credential.getExpiryDate() != null &&
             credential.getExpiryDate().isBefore(LocalDate.now())) {

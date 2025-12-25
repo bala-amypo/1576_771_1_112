@@ -18,6 +18,11 @@ public class CredentialRecordServiceImpl
         implements CredentialRecordService {
 
     private final CredentialRecordRepository credentialRepo;
+    
+    public CredentialRecordRepository getRepository() {
+    return credentialRepo;
+    }
+
 
     @Override
     public CredentialRecord createCredential(CredentialRecord record) {

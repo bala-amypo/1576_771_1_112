@@ -12,15 +12,17 @@ import com.example.demo.entity.CredentialRecord;
 public interface CredentialRecordRepository
         extends JpaRepository<CredentialRecord, Long> {
 
-    CredentialRecord save(CredentialRecord record);
-
     Optional<CredentialRecord> findById(Long id);
 
     List<CredentialRecord> findByHolderId(Long holderId);
 
     Optional<CredentialRecord> findByCredentialCode(String credentialCode);
 
-    // ✅ FIXED METHOD NAME
+    // ✅ REQUIRED BY TESTS (name matters)
+    @Query("SELECT c FROM CredentialRecord c WHERE c.expiryDate < :date")
+    List<CredentialRecord> findExpiredBefore(LocalDate date);
+
+    // ✅ ALSO OK TO KEEP
     List<CredentialRecord> findByExpiryDateBefore(LocalDate date);
 
     @Query("SELECT c FROM CredentialRecord c WHERE c.status = :status")

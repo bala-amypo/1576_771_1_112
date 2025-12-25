@@ -26,9 +26,11 @@ public class AuditTrailRecord {
     public AuditTrailRecord() {}
 
     public AuditTrailRecord(Long credentialId, String action) {
-        this.credentialId = credentialId;
-        this.action = action;
+    this.credentialId = credentialId;
+    this.action = action;
+    this.loggedAt = LocalDateTime.now();
     }
+
 
     public Long getId() { return id; }
     public Long getCredentialId() { return credentialId; }

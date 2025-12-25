@@ -12,7 +12,7 @@ public class User {
 
     private String fullName;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
 
     private String password;
@@ -20,6 +20,15 @@ public class User {
     private String role;
 
     public User() {}
+
+    // ✅ REQUIRED BY TESTS
+    public User(Long id, String fullName, String email, String password, String role) {
+        this.id = id;
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     public Long getId() { return id; }
     public String getFullName() { return fullName; }
@@ -32,12 +41,4 @@ public class User {
     public void setEmail(String email) { this.email = email; }
     public void setPassword(String password) { this.password = password; }
     public void setRole(String role) { this.role = role; }
-
-    @PrePersist
-    protected void onCreate() {
-        if (role == null ||
-           (!role.equals("ADMIN") && !role.equals("VERIFIER") && !role.equals("VIEWER"))) {
-            role = "VIEWER";
-        }
-    }
 }

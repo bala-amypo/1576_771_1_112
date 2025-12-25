@@ -19,6 +19,11 @@ public class VerificationRule {
 
     public Long getId() { return id; }
     public String getRuleCode() { return ruleCode; }
+
+    // ✅ REQUIRED BY TEST
+    public boolean getActive() { return active; }
+
+    // ✅ KEEP (JavaBean standard)
     public boolean isActive() { return active; }
 
     public void setId(Long id) { this.id = id; }

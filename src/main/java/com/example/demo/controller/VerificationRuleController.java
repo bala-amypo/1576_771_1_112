@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.entity.VerificationRule;
 import com.example.demo.service.VerificationRuleService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,35 +19,42 @@ public class VerificationRuleController {
     private final VerificationRuleService ruleService;
 
     @PostMapping
-    public ResponseEntity<VerificationRule> create(@Valid @RequestBody VerificationRule rule) {
-        VerificationRule created = ruleService.createRule(rule);
-        return ResponseEntity.status(201).body(created);
+    public ResponseEntity<VerificationRule> create(
+            @RequestBody VerificationRule rule) {
+
+        return ResponseEntity.status(201)
+                .body(ruleService.createRule(rule));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VerificationRule> update(@PathVariable Long id,@Valid @RequestBody VerificationRule rule) {
-        VerificationRule updated = ruleService.updateRule(id, rule);
-        return ResponseEntity.status(200).body(updated);
+    public ResponseEntity<VerificationRule> update(
+            @PathVariable Long id,
+            @RequestBody VerificationRule rule) {
+
+        return ResponseEntity.ok(
+                ruleService.updateRule(id, rule));
     }
 
     @GetMapping("/active")
     public ResponseEntity<List<VerificationRule>> getActiveRules() {
-        List<VerificationRule> rules = ruleService.getActiveRules();
-        return ResponseEntity.status(200).body(rules);
+        return ResponseEntity.ok(
+                ruleService.getActiveRules());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VerificationRule> getById(@PathVariable Long id) {
-        Optional<VerificationRule> rule = ruleService.getRuleById(id);
-        if (rule.isPresent()) {
-            return ResponseEntity.status(200).body(rule.get());
-        }
-        return ResponseEntity.status(404).build();
+    public ResponseEntity<VerificationRule> getById(
+            @PathVariable Long id) {
+
+        Optional<VerificationRule> rule =
+                ruleService.getRuleById(id);
+
+        return rule.map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
     public ResponseEntity<List<VerificationRule>> getAll() {
-        List<VerificationRule> rules = ruleService.getAllRules();
-        return ResponseEntity.status(200).body(rules);
+        return ResponseEntity.ok(
+                ruleService.getAllRules());
     }
 }

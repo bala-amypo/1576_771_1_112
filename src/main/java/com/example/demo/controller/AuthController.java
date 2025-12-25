@@ -1,40 +1,81 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.*;
 
+import com.example.demo.dto.JwtResponse;
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
 
-import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    
-    @Autowired
-    UserService userService;
+
+    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@Valid @RequestBody User user) {
-        User createdUser = userService.registerUser(user);
-        return ResponseEntity.status(201).body(createdUser);
+    public ResponseEntity<JwtResponse> register(
+            @RequestBody RegisterRequest request) {
+
+        User user = new User();
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setRole(request.getRole());
+
+        User saved = userService.registerUser(user);
+
+        String token = jwtUtil.generateToken(
+                saved.getId(),
+                saved.getEmail(),
+                saved.getRole());
+
+        return ResponseEntity.status(201)
+                .body(new JwtResponse(
+                        token,
+                        saved.getId(),
+                        saved.getEmail(),
+                        saved.getRole()));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> loginUser(@Valid @RequestParam String email, @Valid @RequestParam String password) {
-        User user = userService.findByEmail(email);
-        if (user != null && user.getPassword().equals(password)) {
-            return ResponseEntity.status(200).body(user);
-        } else {
-            return ResponseEntity.status(401).build();
-        }
-    }
-        
+    public ResponseEntity<JwtResponse> login(
+            @RequestBody LoginRequest request) {
 
+        try {
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword())
+            );
+        } catch (AuthenticationException ex) {
+            throw new ResourceNotFoundException("Invalid credentials");
+        }
+
+        User user = userService.findByEmail(request.getEmail());
+
+        String token = jwtUtil.generateToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRole());
+
+        return ResponseEntity.ok(
+                new JwtResponse(
+                        token,
+                        user.getId(),
+                        user.getEmail(),
+                        user.getRole()));
+    }
 }

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.entity.AuditTrailRecord;
 import com.example.demo.service.AuditTrailService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -19,28 +18,18 @@ public class AuditTrailController {
     private final AuditTrailService auditService;
 
     @PostMapping
-    public ResponseEntity<AuditTrailRecord> log(@Valid @RequestBody AuditTrailRecord record){
-        return ResponseEntity.status(201).body(auditService.logEvent(record));
+    public ResponseEntity<AuditTrailRecord> log(
+            @RequestBody AuditTrailRecord record) {
+
+        return ResponseEntity.status(201)
+                .body(auditService.logEvent(record));
     }
 
     @GetMapping("/credential/{credentialId}")
-    public ResponseEntity<List<AuditTrailRecord>> getAuditTrailByCredentialId( @PathVariable Long credentialId) {
+    public ResponseEntity<List<AuditTrailRecord>> getByCredential(
+            @PathVariable Long credentialId) {
 
-        List<AuditTrailRecord> logs = auditService.getLogsByCredential(credentialId);
-
-        if(logs.isEmpty())
-            return ResponseEntity.noContent().build();
-
-        return ResponseEntity.ok(logs);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<AuditTrailRecord>> getAll(){
-        List<AuditTrailRecord> logs = auditService.getAllLogs();
-
-        if(logs.isEmpty())
-            return ResponseEntity.noContent().build();
-
-        return ResponseEntity.ok(logs);
+        return ResponseEntity.ok(
+                auditService.getLogsByCredential(credentialId));
     }
 }

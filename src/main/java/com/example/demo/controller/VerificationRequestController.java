@@ -19,23 +19,22 @@ public class VerificationRequestController {
 
     @PostMapping
     public ResponseEntity<VerificationRequest> create(
-            @RequestBody VerificationRequest request){
+            @RequestBody VerificationRequest request) {
 
-        return ResponseEntity
-                .status(201)
+        return ResponseEntity.status(201)
                 .body(service.initiateVerification(request));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<VerificationRequest> getById(
-            @PathVariable Long id){
+            @PathVariable Long id) {
 
         return ResponseEntity.ok(service.getRequestById(id));
     }
 
     @GetMapping("/credential/{credentialId}")
     public ResponseEntity<List<VerificationRequest>> getByCredential(
-            @PathVariable Long credentialId){
+            @PathVariable Long credentialId) {
 
         return ResponseEntity.ok(
                 service.getRequestsByCredential(credentialId));
@@ -43,7 +42,7 @@ public class VerificationRequestController {
 
     @PostMapping("/{id}/process")
     public ResponseEntity<VerificationRequest> process(
-            @PathVariable Long id){
+            @PathVariable Long id) {
 
         return ResponseEntity.ok(
                 service.processVerification(id));

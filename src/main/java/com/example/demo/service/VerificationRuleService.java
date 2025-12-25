@@ -9,7 +9,7 @@ public interface VerificationRuleService {
 
     VerificationRule createRule(VerificationRule rule);
 
-    VerificationRule updateRule(Long id, VerificationRule update);
+    VerificationRule updateRule(Long id, VerificationRule rule);
 
     Optional<VerificationRule> getRuleById(Long id);
 

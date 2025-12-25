@@ -10,10 +10,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SimpleStatusServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(
+            HttpServletRequest req,
+            HttpServletResponse resp)
             throws ServletException, IOException {
 
-        response.setContentType("text/plain");
-        response.getWriter().write("Digital Credential Verification Engine is running");
+        resp.getWriter()
+            .write("Digital Credential Verification Engine is running");
     }
 }

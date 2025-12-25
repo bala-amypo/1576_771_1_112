@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
@@ -15,19 +16,23 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repo;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User registerUser(User user){
+    public User registerUser(User user) {
 
-        if(repo.existsByEmail(user.getEmail()))
-            throw new BadRequestException("Duplicate email!");
+        if (repo.existsByEmail(user.getEmail())) {
+            throw new BadRequestException("Duplicate email");
+        }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return repo.save(user);
     }
 
     @Override
-    public User findByEmail(String email){
+    public User findByEmail(String email) {
         return repo.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found"));
     }
 }

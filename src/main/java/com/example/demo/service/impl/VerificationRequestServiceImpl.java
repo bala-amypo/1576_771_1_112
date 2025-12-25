@@ -22,55 +22,60 @@ import lombok.RequiredArgsConstructor;
 public class VerificationRequestServiceImpl
         implements VerificationRequestService {
 
-    private final VerificationRequestRepository repo;
+    private final VerificationRequestRepository requestRepo;
     private final CredentialRecordRepository credentialRepo;
     private final AuditTrailRecordRepository auditRepo;
 
     @Override
-    public VerificationRequest initiateVerification(VerificationRequest request){
-        request.setStatus("PENDING");
-        return repo.save(request);
+    public VerificationRequest initiateVerification(
+            VerificationRequest request) {
+
+        return requestRepo.save(request);
     }
 
     @Override
-    public VerificationRequest getRequestById(Long id){
-        return repo.findById(id)
+    public VerificationRequest getRequestById(Long id) {
+
+        return requestRepo.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Verification request not found"));
+                        new ResourceNotFoundException(
+                                "Verification request not found"));
     }
 
     @Override
-    public List<VerificationRequest> getRequestsByCredential(Long credentialId){
-        return repo.findByCredentialId(credentialId);
+    public List<VerificationRequest> getRequestsByCredential(
+            Long credentialId) {
+
+        return requestRepo.findByCredentialId(credentialId);
     }
 
     @Override
-    public VerificationRequest processVerification(Long requestId){
+    public VerificationRequest processVerification(Long requestId) {
 
         VerificationRequest request = getRequestById(requestId);
 
-        CredentialRecord credential = credentialRepo
-                .findById(request.getCredentialId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Credential not found"));
+        CredentialRecord credential =
+                credentialRepo.findById(request.getCredentialId())
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Credential not found"));
 
         if (credential.getExpiryDate() != null &&
-                credential.getExpiryDate().isBefore(LocalDate.now())) {
+            credential.getExpiryDate().isBefore(LocalDate.now())) {
 
             request.setStatus("FAILED");
-            request.setResultMessage("Credential expired");
         } else {
             request.setStatus("SUCCESS");
-            request.setResultMessage("Credential verified successfully");
         }
 
         request.setVerifiedAt(LocalDateTime.now());
 
         AuditTrailRecord audit = new AuditTrailRecord();
         audit.setCredentialId(credential.getId());
+        audit.setAction("VERIFICATION_" + request.getStatus());
         audit.setLoggedAt(LocalDateTime.now());
         auditRepo.save(audit);
 
-        return repo.save(request);
+        return requestRepo.save(request);
     }
 }

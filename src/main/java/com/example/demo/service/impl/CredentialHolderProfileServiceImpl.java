@@ -4,6 +4,7 @@ import com.example.demo.entity.CredentialHolderProfile;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.CredentialHolderProfileRepository;
 import com.example.demo.service.CredentialHolderProfileService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,15 @@ public class CredentialHolderProfileServiceImpl
     @Override
     public List<CredentialHolderProfile> getAllHolders() {
         return repository.findAll();
+    }
+
+    @Override
+    public CredentialHolderProfile findByHolderId(String holderId) {
+        return repository.findAll().stream()
+                .filter(h -> holderId.equals(h.getHolderId()))
+                .findFirst()
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Holder not found"));
     }
 
     @Override

@@ -28,6 +28,7 @@ public class CredentialRecord {
     private LocalDate expiryDate;
     private String metadataJson;
 
+    // ✅ MUST BE LIST (tests expect size = 2)
     @ManyToMany
     @Builder.Default
     private List<VerificationRule> rules = new ArrayList<>();

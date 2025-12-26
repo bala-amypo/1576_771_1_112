@@ -17,12 +17,22 @@ public class AuditTrailController {
 
     private final AuditTrailService service;
 
+    // ✅ ADDED
+    @PostMapping
+    public ResponseEntity<AuditTrailRecord> log(@RequestBody AuditTrailRecord record) {
+        return ResponseEntity.ok(service.logEvent(record));
+    }
+
     @GetMapping("/credential/{credentialId}")
     public ResponseEntity<List<AuditTrailRecord>> getByCredential(
             @PathVariable Long credentialId) {
+        return ResponseEntity.ok(service.getLogsByCredential(credentialId));
+    }
 
-        return ResponseEntity.ok(
-                service.getLogsByCredential(credentialId)
-        );
+    // ✅ ADDED
+    @GetMapping
+    public ResponseEntity<List<AuditTrailRecord>> getAll() {
+        return ResponseEntity.ok(service.getAllLogs());
     }
 }
+

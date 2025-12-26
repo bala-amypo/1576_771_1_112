@@ -14,20 +14,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuditTrailServiceImpl implements AuditTrailService {
 
-    private final AuditTrailRecordRepository auditRepo;
+    private final AuditTrailRecordRepository repo;
 
     @Override
     public AuditTrailRecord logEvent(AuditTrailRecord record) {
-
         if (record.getLoggedAt() == null) {
             record.setLoggedAt(LocalDateTime.now());
         }
-
-        return auditRepo.save(record);
+        return repo.save(record);
     }
 
     @Override
     public List<AuditTrailRecord> getLogsByCredential(Long credentialId) {
-        return auditRepo.findByCredentialId(credentialId);
+        return repo.findByCredentialId(credentialId);
+    }
+
+    @Override
+    public List<AuditTrailRecord> getAllLogs() {
+        return repo.findAll();
     }
 }

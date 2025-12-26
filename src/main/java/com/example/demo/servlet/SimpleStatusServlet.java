@@ -8,7 +8,6 @@ import java.io.IOException;
 
 public class SimpleStatusServlet extends HttpServlet {
 
-    // ❗ MUST BE public (tests call it directly)
     @Override
     public void doGet(
             HttpServletRequest req,

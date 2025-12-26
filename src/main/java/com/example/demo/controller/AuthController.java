@@ -24,6 +24,10 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    /**
+     * REGISTER USER
+     * ❌ DOES NOT ISSUE JWT
+     */
     @PostMapping("/register")
     public ResponseEntity<JwtResponse> register(@RequestBody RegisterRequest request) {
 
@@ -34,17 +38,16 @@ public class AuthController {
                 .role(request.getRole())
                 .build();
 
-        User saved = userService.registerUser(user);
+        userService.registerUser(user);
 
-        String token = jwtUtil.generateToken(
-                saved.getId(),
-                saved.getEmail(),
-                saved.getRole()
-        );
-
-        return ResponseEntity.ok(new JwtResponse(token));
+        // No token on registration
+        return ResponseEntity.ok(new JwtResponse(null));
     }
 
+    /**
+     * LOGIN USER
+     * ✅ ISSUES JWT
+     */
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
 

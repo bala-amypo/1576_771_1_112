@@ -12,9 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,9 +24,8 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    // ✅ REGISTER — NO TOKEN GENERATED
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<JwtResponse> register(@RequestBody RegisterRequest request) {
 
         User user = User.builder()
                 .email(request.getEmail())
@@ -36,18 +34,21 @@ public class AuthController {
                 .role(request.getRole())
                 .build();
 
-        userService.registerUser(user);
+        User saved = userService.registerUser(user);
 
-        return ResponseEntity.ok(
-                Map.of("message", "User registered successfully")
+        String token = jwtUtil.generateToken(
+                saved.getId(),
+                saved.getEmail(),
+                saved.getRole()
         );
+
+        return ResponseEntity.ok(new JwtResponse(token));
     }
 
-    // ✅ LOGIN — TOKEN GENERATED HERE
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
 
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()

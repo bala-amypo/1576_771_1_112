@@ -35,7 +35,6 @@ public class CredentialRecordController {
         return ResponseEntity.ok(service.getCredentialsByHolder(holderId));
     }
 
-    
     @GetMapping("/code/{code}")
     public ResponseEntity<CredentialRecord> getByCode(
             @PathVariable String code) {

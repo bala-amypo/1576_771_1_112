@@ -12,27 +12,28 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CredentialRecordServiceImpl implements CredentialRecordService {
+public class CredentialRecordServiceImpl
+        implements CredentialRecordService {
 
     private final CredentialRecordRepository repository;
 
     @Override
     public CredentialRecord createCredential(CredentialRecord record) {
+        if (record.getStatus() == null) {
+            record.setStatus("VALID");
+        }
         if (record.getExpiryDate() != null &&
             record.getExpiryDate().isBefore(LocalDate.now())) {
             record.setStatus("EXPIRED");
-        } else if (record.getStatus() == null) {
-            record.setStatus("VALID");
         }
         return repository.save(record);
     }
 
     @Override
-    public CredentialRecord updateCredential(Long id, CredentialRecord record) {
+    public CredentialRecord updateCredential(Long id, CredentialRecord updated) {
         CredentialRecord existing = repository.findById(id).orElseThrow();
-        if (record.getCredentialCode() != null) {
-            existing.setCredentialCode(record.getCredentialCode());
-        }
+        if (updated.getCredentialCode() != null)
+            existing.setCredentialCode(updated.getCredentialCode());
         return repository.save(existing);
     }
 
@@ -41,15 +42,13 @@ public class CredentialRecordServiceImpl implements CredentialRecordService {
         return repository.findByHolderId(holderId);
     }
 
-    // ✅ IMPLEMENT IT
     @Override
-    public CredentialRecord getByCredentialCode(String credentialCode) {
-        return repository.findByCredentialCode(credentialCode).orElse(null);
+    public CredentialRecord getCredentialByCode(String code) {
+        return repository.findByCredentialCode(code).orElse(null);
     }
 
     @Override
     public List<CredentialRecord> getAllCredentials() {
         return repository.findAll();
     }
-
 }

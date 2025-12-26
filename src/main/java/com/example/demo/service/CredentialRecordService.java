@@ -7,11 +7,11 @@ public interface CredentialRecordService {
 
     CredentialRecord createCredential(CredentialRecord record);
 
-    CredentialRecord updateCredential(Long id, CredentialRecord record);
+    CredentialRecord updateCredential(Long id, CredentialRecord updated);
 
     List<CredentialRecord> getCredentialsByHolder(Long holderId);
 
-    CredentialRecord getByCredentialCode(String credentialCode);
+    CredentialRecord getCredentialByCode(String code);
 
     List<CredentialRecord> getAllCredentials();
 }

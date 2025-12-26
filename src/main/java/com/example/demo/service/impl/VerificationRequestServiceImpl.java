@@ -17,27 +17,24 @@ import java.util.List;
 public class VerificationRequestServiceImpl
         implements VerificationRequestService {
 
-    // ✅ EXACT constructor signature expected by TEST
-    private final VerificationRequestRepository verificationRequestRepo;
+    private final VerificationRequestRepository repo;
     private final CredentialRecordService credentialService;
-    private final VerificationRuleService ruleService;
     private final AuditTrailService auditService;
 
     @Override
     public VerificationRequest initiateVerification(VerificationRequest request) {
-        return verificationRequestRepo.save(request);
+        return repo.save(request);
     }
 
     @Override
     public VerificationRequest processVerification(Long requestId) {
 
-        VerificationRequest request = verificationRequestRepo.findById(requestId)
+        VerificationRequest req = repo.findById(requestId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Request not found"));
 
-        // ✅ MUST use findAll() because test mocks this
         CredentialRecord credential = credentialService.getAllCredentials().stream()
-                .filter(c -> c.getId().equals(request.getCredentialId()))
+                .filter(c -> c.getId().equals(req.getCredentialId()))
                 .findFirst()
                 .orElse(null);
 
@@ -45,21 +42,27 @@ public class VerificationRequestServiceImpl
                 credential.getExpiryDate() != null &&
                 credential.getExpiryDate().isBefore(LocalDate.now());
 
-        request.setStatus(expired ? "FAILED" : "SUCCESS");
-        verificationRequestRepo.save(request);
+        req.setStatus(expired ? "FAILED" : "SUCCESS");
+        repo.save(req);
 
-        AuditTrailRecord log = new AuditTrailRecord();
-        log.setCredentialId(request.getCredentialId());
-        log.setAction("Verification " + request.getStatus());
-        log.setLoggedAt(LocalDateTime.now());
-        auditService.logEvent(log);
+        auditService.logEvent(
+                AuditTrailRecord.builder()
+                        .credentialId(req.getCredentialId())
+                        .action("Verification " + req.getStatus())
+                        .loggedAt(LocalDateTime.now())
+                        .build()
+        );
 
-        return request;
+        return req;
     }
-
 
     @Override
     public List<VerificationRequest> getRequestsByCredential(Long credentialId) {
-        return verificationRequestRepo.findByCredentialId(credentialId);
+        return repo.findByCredentialId(credentialId);
+    }
+
+    @Override
+    public List<VerificationRequest> getAllRequests() {
+        return repo.findAll();
     }
 }

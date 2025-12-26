@@ -34,15 +34,10 @@ public class AuthController {
                 .role(request.getRole())
                 .build();
 
-        User saved = userService.registerUser(user);
+        userService.registerUser(user);
 
-        String token = jwtUtil.generateToken(
-                saved.getId(),
-                saved.getEmail(),
-                saved.getRole()
-        );
-
-        return ResponseEntity.ok(new JwtResponse(token));
+        // ✅ No token on registration
+        return ResponseEntity.ok(new JwtResponse(null));
     }
 
     @PostMapping("/login")

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -17,13 +18,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtAuthenticationFilter jwtFilter;
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
@@ -31,12 +31,13 @@ public class SecurityConfig {
 
         http
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .sessionManagement(sm ->
+                sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
 
+                // 🔓 PUBLIC
                 .requestMatchers(
                         "/api/auth/**",
                         "/status",
@@ -45,28 +46,44 @@ public class SecurityConfig {
                         "/api-docs/**"
                 ).permitAll()
 
+                // 👤 HOLDERS
+                .requestMatchers("/api/holders/**")
+                    .hasAnyRole("ADMIN", "VERIFIER")
+
+                // 🎓 CREDENTIALS
+                .requestMatchers(HttpMethod.GET, "/api/credentials/**")
+                    .hasAnyRole("ADMIN", "VERIFIER", "VIEWER")
+
+                .requestMatchers(HttpMethod.POST, "/api/credentials/**")
+                    .hasAnyRole("ADMIN", "VERIFIER")
+
+                .requestMatchers(HttpMethod.PUT, "/api/credentials/**")
+                    .hasAnyRole("ADMIN", "VERIFIER")
+
+                // 🧪 VERIFICATION RULES
+                .requestMatchers("/api/rules/**")
+                    .hasRole("ADMIN")
+
+                // ✅ VERIFICATION REQUESTS
                 .requestMatchers("/api/verifications/**")
                     .hasAnyRole("ADMIN", "VERIFIER")
 
-                .requestMatchers("/api/credentials/**")
-                    .hasAnyRole("ADMIN", "VERIFIER", "VIEWER")
+                // 🧾 AUDIT TRAIL (ADMIN ONLY)
+                .requestMatchers("/api/audit/**")
+                    .hasRole("ADMIN")
 
+                // 🔒 EVERYTHING ELSE
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(
-                    jwtAuthenticationFilter,
-                    UsernamePasswordAuthenticationFilter.class
-            );
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration)
-            throws Exception {
-
-        return configuration.getAuthenticationManager();
+            AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
@@ -74,14 +91,13 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
 
         DaoAuthenticationProvider provider =
                 new DaoAuthenticationProvider();
 
-        provider.setUserDetailsService(customUserDetailsService);
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
 
         return provider;

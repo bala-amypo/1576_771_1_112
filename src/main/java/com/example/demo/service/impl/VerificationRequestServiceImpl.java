@@ -22,7 +22,7 @@ public class VerificationRequestServiceImpl
 
     private final VerificationRequestRepository verificationRequestRepo;
     private final CredentialRecordService credentialService;
-    private final VerificationRuleService ruleService;
+    private final VerificationRuleService ruleService; 
     private final AuditTrailService auditService;
 
     public VerificationRequestServiceImpl(

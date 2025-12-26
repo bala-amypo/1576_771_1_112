@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "credential_records")
@@ -28,7 +28,8 @@ public class CredentialRecord {
     private LocalDate expiryDate;
     private String metadataJson;
 
+    // ✅ MUST BE LIST (tests expect size = 2)
     @ManyToMany
     @Builder.Default
-    private Set<VerificationRule> rules = new HashSet<>();
+    private List<VerificationRule> rules = new ArrayList<>();
 }

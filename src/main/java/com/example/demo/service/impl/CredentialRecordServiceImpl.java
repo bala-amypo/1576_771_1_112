@@ -46,4 +46,10 @@ public class CredentialRecordServiceImpl implements CredentialRecordService {
     public CredentialRecord getByCredentialCode(String credentialCode) {
         return repository.findByCredentialCode(credentialCode).orElse(null);
     }
+
+    @Override
+    public List<CredentialRecord> getAllCredentials() {
+        return repository.findAll();
+    }
+
 }

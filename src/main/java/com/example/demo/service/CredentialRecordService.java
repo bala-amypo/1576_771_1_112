@@ -11,6 +11,8 @@ public interface CredentialRecordService {
 
     List<CredentialRecord> getCredentialsByHolder(Long holderId);
 
-    // ✅ ADD THIS METHOD
     CredentialRecord getByCredentialCode(String credentialCode);
+
+    // ✅ ADD THIS
+    List<CredentialRecord> getAllCredentials();
 }

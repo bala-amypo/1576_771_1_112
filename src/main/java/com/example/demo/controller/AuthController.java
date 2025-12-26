@@ -36,19 +36,20 @@ public class AuthController {
 
         userService.registerUser(user);
 
-        // ✅ No token on registration
+        // ❌ No token on register
         return ResponseEntity.ok(new JwtResponse(null));
     }
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                request.getEmail(),
+                                request.getPassword()
+                        )
+                );
 
         User user = userService.findByEmail(request.getEmail());
 

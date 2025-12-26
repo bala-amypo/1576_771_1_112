@@ -25,7 +25,6 @@ public class VerificationRequestServiceImpl
     private final VerificationRuleService ruleService; // required by TEST
     private final AuditTrailService auditService;
 
-    // ✅ CONSTRUCTOR EXPECTED BY TEST (4 ARGS)
     public VerificationRequestServiceImpl(
             VerificationRequestRepository verificationRequestRepo,
             CredentialRecordService credentialService,

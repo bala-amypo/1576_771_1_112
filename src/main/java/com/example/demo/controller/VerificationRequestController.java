@@ -35,9 +35,6 @@ public class VerificationRequestController {
                 service.getRequestsByCredential(credentialId));
     }
 
-    // ✅ FIXED: STEP-4 DOES NOT REQUIRE getById
-    // (Removed to avoid mismatch)
-
     @GetMapping
     public ResponseEntity<List<VerificationRequest>> getAll() {
         return ResponseEntity.ok(service.getAllRequests());

@@ -15,7 +15,6 @@ public class CredentialHolderProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ✅ REQUIRED BY SERVICE + SPEC
     @Column(unique = true, nullable = false)
     private String holderId;
 

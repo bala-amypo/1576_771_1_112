@@ -29,7 +29,6 @@ public class VerificationRuleController {
         return ResponseEntity.ok(service.updateRule(id, rule));
     }
 
-    // ✅ FIXED NAME
     @GetMapping("/{id}")
     public ResponseEntity<VerificationRule> getById(
             @PathVariable Long id) {

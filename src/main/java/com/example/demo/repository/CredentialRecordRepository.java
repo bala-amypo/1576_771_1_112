@@ -16,11 +16,9 @@ public interface CredentialRecordRepository
 
     List<CredentialRecord> findByHolderId(Long holderId);
 
-    // ✅ FIXED: Explicit JPQL
     @Query("SELECT c FROM CredentialRecord c WHERE c.expiryDate < :date")
     List<CredentialRecord> findExpiredBefore(@Param("date") LocalDate date);
 
-    // REQUIRED BY TESTS
     @Query("SELECT c FROM CredentialRecord c WHERE c.status = :status")
     List<CredentialRecord> findByStatusUsingHql(@Param("status") String status);
 

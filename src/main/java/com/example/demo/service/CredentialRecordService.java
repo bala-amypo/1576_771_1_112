@@ -13,6 +13,5 @@ public interface CredentialRecordService {
 
     CredentialRecord getByCredentialCode(String credentialCode);
 
-    // ✅ ADD THIS
     List<CredentialRecord> getAllCredentials();
 }

@@ -4,6 +4,8 @@ import com.example.demo.dto.JwtResponse;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
 
@@ -34,22 +36,26 @@ public class AuthController {
                 .role(request.getRole())
                 .build();
 
-        userService.registerUser(user);
+        User saved = userService.registerUser(user);
 
-        // ❌ No token on register
-        return ResponseEntity.ok(new JwtResponse(null));
+        String token = jwtUtil.generateToken(
+                saved.getId(),
+                saved.getEmail(),
+                saved.getRole()
+        );
+
+        return ResponseEntity.ok(new JwtResponse(token));
     }
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
 
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                request.getEmail(),
-                                request.getPassword()
-                        )
-                );
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
 
         User user = userService.findByEmail(request.getEmail());
 

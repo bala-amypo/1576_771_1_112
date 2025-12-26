@@ -4,8 +4,6 @@ import com.example.demo.dto.JwtResponse;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
 
@@ -14,8 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,8 +25,9 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    // ✅ REGISTER — NO TOKEN GENERATED
     @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
 
         User user = User.builder()
                 .email(request.getEmail())
@@ -36,21 +36,18 @@ public class AuthController {
                 .role(request.getRole())
                 .build();
 
-        User saved = userService.registerUser(user);
+        userService.registerUser(user);
 
-        String token = jwtUtil.generateToken(
-                saved.getId(),
-                saved.getEmail(),
-                saved.getRole()
+        return ResponseEntity.ok(
+                Map.of("message", "User registered successfully")
         );
-
-        return ResponseEntity.ok(new JwtResponse(token));
     }
 
+    // ✅ LOGIN — TOKEN GENERATED HERE
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {
 
-        Authentication authentication = authenticationManager.authenticate(
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()

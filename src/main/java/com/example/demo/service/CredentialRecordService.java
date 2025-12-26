@@ -9,7 +9,8 @@ public interface CredentialRecordService {
 
     CredentialRecord updateCredential(Long id, CredentialRecord record);
 
-    List<CredentialRecord> getByHolderId(Long holderId);
+    List<CredentialRecord> getCredentialsByHolder(Long holderId);
 
+    // ✅ ADD THIS METHOD
     CredentialRecord getByCredentialCode(String credentialCode);
 }

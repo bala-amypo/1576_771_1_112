@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.CredentialHolderProfile;
+import java.util.List;
 
 public interface CredentialHolderProfileService {
 
@@ -8,5 +9,7 @@ public interface CredentialHolderProfileService {
 
     CredentialHolderProfile getHolderById(Long id);
 
-    CredentialHolderProfile updateStatus(Long id, boolean active);
+    List<CredentialHolderProfile> getAllHolders();
+
+    CredentialHolderProfile updateHolderStatus(Long id, boolean active);
 }

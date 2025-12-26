@@ -1,16 +1,15 @@
 package com.example.demo.servlet;
 
-import java.io.IOException;
-
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+
 public class SimpleStatusServlet extends HttpServlet {
 
-    // ✅ MUST BE PUBLIC (tests call it directly)
     @Override
-    public void doGet(
+    protected void doGet(
             HttpServletRequest req,
             HttpServletResponse resp) throws IOException {
 

@@ -35,7 +35,7 @@ public class CredentialRecordController {
         return ResponseEntity.ok(service.getCredentialsByHolder(holderId));
     }
 
-    // ✅ FIXED NAME
+    
     @GetMapping("/code/{code}")
     public ResponseEntity<CredentialRecord> getByCode(
             @PathVariable String code) {

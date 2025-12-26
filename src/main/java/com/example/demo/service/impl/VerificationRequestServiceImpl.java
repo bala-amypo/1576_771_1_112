@@ -35,13 +35,15 @@ public class VerificationRequestServiceImpl
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Request not found"));
 
-        // ✅ TEST mocks credentialService.getCredentialsByHolder(...)
-        List<CredentialRecord> credentials =
-                credentialService.getCredentialsByHolder(request.getCredentialId());
+        // ✅ MUST use findAll() because test mocks this
+        CredentialRecord credential = credentialService.getAllCredentials().stream()
+                .filter(c -> c.getId().equals(request.getCredentialId()))
+                .findFirst()
+                .orElse(null);
 
-        boolean expired = credentials.stream().anyMatch(c ->
-                c.getExpiryDate() != null &&
-                c.getExpiryDate().isBefore(LocalDate.now()));
+        boolean expired = credential != null &&
+                credential.getExpiryDate() != null &&
+                credential.getExpiryDate().isBefore(LocalDate.now());
 
         request.setStatus(expired ? "FAILED" : "SUCCESS");
         verificationRequestRepo.save(request);
@@ -54,6 +56,7 @@ public class VerificationRequestServiceImpl
 
         return request;
     }
+
 
     @Override
     public List<VerificationRequest> getRequestsByCredential(Long credentialId) {

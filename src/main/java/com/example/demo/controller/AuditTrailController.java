@@ -17,7 +17,6 @@ public class AuditTrailController {
 
     private final AuditTrailService service;
 
-    // ✅ ADDED
     @PostMapping
     public ResponseEntity<AuditTrailRecord> log(@RequestBody AuditTrailRecord record) {
         return ResponseEntity.ok(service.logEvent(record));
@@ -29,7 +28,6 @@ public class AuditTrailController {
         return ResponseEntity.ok(service.getLogsByCredential(credentialId));
     }
 
-    // ✅ ADDED
     @GetMapping
     public ResponseEntity<List<AuditTrailRecord>> getAll() {
         return ResponseEntity.ok(service.getAllLogs());

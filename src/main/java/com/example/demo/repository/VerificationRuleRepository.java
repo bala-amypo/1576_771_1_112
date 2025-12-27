@@ -1,12 +1,18 @@
 package com.example.demo.repository;
 
+import com.example.demo.entity.VerificationRule;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.demo.entity.*;
+import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
-public interface VerificationRuleRepository
-        extends JpaRepository<VerificationRule, Long> {
+@Repository
+public interface VerificationRuleRepository extends JpaRepository<VerificationRule, Long> {
+    
+    Optional<VerificationRule> findById(Long id);
+    
     List<VerificationRule> findByActiveTrue();
+    
+    Optional<VerificationRule> findByRuleCode(String ruleCode);
 }
-

@@ -27,14 +27,13 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register(@RequestBody RegisterRequest request) {
+        public ResponseEntity<JwtResponse> register(@RequestBody RegisterRequest request) {
 
-        User user = User.builder()
-                .email(request.getEmail())
-                .fullName(request.getFullName())
-                .password(request.getPassword())
-                .role(request.getRole())
-                .build();
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setFullName(request.getFullName());
+        user.setPassword(request.getPassword());
+        user.setRole(request.getRole());
 
         User saved = userService.registerUser(user);
 
@@ -45,7 +44,8 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(new JwtResponse(token));
-    }
+        }
+
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request) {

@@ -4,47 +4,55 @@ import com.example.demo.entity.VerificationRule;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.VerificationRuleRepository;
 import com.example.demo.service.VerificationRuleService;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class VerificationRuleServiceImpl
-        implements VerificationRuleService {
-
-    private final VerificationRuleRepository repository;
-
+public class VerificationRuleServiceImpl implements VerificationRuleService {
+    
+    private final VerificationRuleRepository ruleRepo;
+    
+    public VerificationRuleServiceImpl(VerificationRuleRepository ruleRepo) {
+        this.ruleRepo = ruleRepo;
+    }
+    
     @Override
     public VerificationRule createRule(VerificationRule rule) {
-        return repository.save(rule);
+        return ruleRepo.save(rule);
     }
-
+    
     @Override
     public VerificationRule updateRule(Long id, VerificationRule updatedRule) {
-        VerificationRule rule = repository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Rule not found"));
-        rule.setRuleCode(updatedRule.getRuleCode());
-        rule.setActive(updatedRule.getActive());
-        return repository.save(rule);
+        VerificationRule existing = ruleRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rule not found with id: " + id));
+        
+        if (updatedRule.getRuleCode() != null) {
+            existing.setRuleCode(updatedRule.getRuleCode());
+        }
+        if (updatedRule.getDescription() != null) {
+            existing.setDescription(updatedRule.getDescription());
+        }
+        if (updatedRule.getAppliesToType() != null) {
+            existing.setAppliesToType(updatedRule.getAppliesToType());
+        }
+        if (updatedRule.getValidationExpression() != null) {
+            existing.setValidationExpression(updatedRule.getValidationExpression());
+        }
+        if (updatedRule.getActive() != null) {
+            existing.setActive(updatedRule.getActive());
+        }
+        
+        return ruleRepo.save(existing);
     }
-
+    
     @Override
     public List<VerificationRule> getActiveRules() {
-        return repository.findByActiveTrue();
+        return ruleRepo.findByActiveTrue();
     }
-
+    
     @Override
     public List<VerificationRule> getAllRules() {
-        return repository.findAll();
-    }
-
-    public VerificationRule getRuleById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Rule not found"));
+        return ruleRepo.findAll();
     }
 }

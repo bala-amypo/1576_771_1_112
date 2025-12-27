@@ -2,8 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.VerificationRule;
 import com.example.demo.service.VerificationRuleService;
-
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,37 +11,45 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rules")
-@RequiredArgsConstructor
+@Tag(name = "Verification Rules", description = "Verification rule management endpoints")
 public class VerificationRuleController {
-
-    private final VerificationRuleService service;
-
+    
+    private final VerificationRuleService ruleService;
+    
+    public VerificationRuleController(VerificationRuleService ruleService) {
+        this.ruleService = ruleService;
+    }
+    
     @PostMapping
-    public ResponseEntity<VerificationRule> create(
-            @RequestBody VerificationRule rule) {
-        return ResponseEntity.ok(service.createRule(rule));
+    @Operation(summary = "Create rule")
+    public ResponseEntity<VerificationRule> create(@RequestBody VerificationRule rule) {
+        return ResponseEntity.ok(ruleService.createRule(rule));
     }
-
+    
     @PutMapping("/{id}")
-    public ResponseEntity<VerificationRule> update(
-            @PathVariable Long id,
-            @RequestBody VerificationRule rule) {
-        return ResponseEntity.ok(service.updateRule(id, rule));
+    @Operation(summary = "Update rule")
+    public ResponseEntity<VerificationRule> update(@PathVariable Long id, @RequestBody VerificationRule updatedRule) {
+        return ResponseEntity.ok(ruleService.updateRule(id, updatedRule));
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<VerificationRule> getById(
-            @PathVariable Long id) {
-        return ResponseEntity.ok(service.getRuleById(id));
-    }
-
+    
     @GetMapping("/active")
-    public ResponseEntity<List<VerificationRule>> getActiveRules() {
-        return ResponseEntity.ok(service.getActiveRules());
+    @Operation(summary = "List active rules")
+    public ResponseEntity<List<VerificationRule>> getActive() {
+        return ResponseEntity.ok(ruleService.getActiveRules());
     }
-
+    
+    @GetMapping("/{id}")
+    @Operation(summary = "Get rule by ID")
+    public ResponseEntity<VerificationRule> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(ruleService.getAllRules().stream()
+                .filter(r -> r.getId().equals(id))
+                .findFirst()
+                .orElse(null));
+    }
+    
     @GetMapping
+    @Operation(summary = "List all rules")
     public ResponseEntity<List<VerificationRule>> getAll() {
-        return ResponseEntity.ok(service.getAllRules());
+        return ResponseEntity.ok(ruleService.getAllRules());
     }
 }

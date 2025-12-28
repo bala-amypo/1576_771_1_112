@@ -45,7 +45,6 @@ public class VerificationRequestServiceImpl implements VerificationRequestServic
         VerificationRequest request = verificationRequestRepo.findById(requestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Verification request not found with id: " + requestId));
         
-        // Find the credential
         CredentialRecord credential = null;
         List<CredentialRecord> allCredentials = credentialService.getAllCredentials();
         for (CredentialRecord c : allCredentials) {
@@ -59,10 +58,8 @@ public class VerificationRequestServiceImpl implements VerificationRequestServic
             request.setStatus("FAILED");
             request.setResultMessage("Credential not found");
         } else {
-            // Fetch active rules
             List<VerificationRule> activeRules = ruleService.getActiveRules();
             
-            // Check if credential is expired
             if (credential.getExpiryDate() != null && credential.getExpiryDate().isBefore(LocalDate.now())) {
                 request.setStatus("FAILED");
                 request.setResultMessage("Credential is expired");
@@ -74,7 +71,6 @@ public class VerificationRequestServiceImpl implements VerificationRequestServic
         
         request.setVerifiedAt(LocalDateTime.now());
         
-        // Log audit event
         AuditTrailRecord audit = new AuditTrailRecord();
         audit.setCredentialId(request.getCredentialId());
         audit.setEventType("VERIFICATION");

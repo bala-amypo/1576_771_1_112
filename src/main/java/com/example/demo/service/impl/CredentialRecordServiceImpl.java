@@ -20,7 +20,6 @@ public class CredentialRecordServiceImpl implements CredentialRecordService {
     
     @Override
     public CredentialRecord createCredential(CredentialRecord record) {
-        // Check if expired
         if (record.getExpiryDate() != null && record.getExpiryDate().isBefore(LocalDate.now())) {
             record.setStatus("EXPIRED");
         } else if (record.getStatus() == null) {

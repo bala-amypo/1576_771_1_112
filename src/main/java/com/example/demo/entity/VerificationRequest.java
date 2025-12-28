@@ -32,7 +32,6 @@ public class VerificationRequest {
     public VerificationRequest() {
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

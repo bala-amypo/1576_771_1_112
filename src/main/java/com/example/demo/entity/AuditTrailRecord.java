@@ -26,7 +26,6 @@ public class AuditTrailRecord {
     public AuditTrailRecord() {
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

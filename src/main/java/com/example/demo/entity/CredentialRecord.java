@@ -51,7 +51,6 @@ public class CredentialRecord {
     public CredentialRecord() {
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

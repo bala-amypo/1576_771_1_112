@@ -17,7 +17,6 @@ public class RegisterRequest {
         this.role = role;
     }
 
-    // Getters and Setters
     public String getFullName() {
         return fullName;
     }

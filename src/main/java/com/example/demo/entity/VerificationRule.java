@@ -29,7 +29,6 @@ public class VerificationRule {
         this.active = true;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

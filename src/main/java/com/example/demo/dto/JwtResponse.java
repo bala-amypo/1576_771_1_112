@@ -30,7 +30,6 @@ public class JwtResponse {
         this.fullName = fullName;
     }
 
-    // Getters and Setters
     public String getToken() {
         return token;
     }

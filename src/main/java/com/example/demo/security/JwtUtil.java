@@ -16,7 +16,7 @@ import java.util.function.Function;
 public class JwtUtil {
     
     private static final String SECRET_KEY = "MySecretKeyForJWTTokenGenerationAndValidation12345678901234567890";
-    private static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60 * 10; // 10 hours
+    private static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60 * 10; 
     
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());

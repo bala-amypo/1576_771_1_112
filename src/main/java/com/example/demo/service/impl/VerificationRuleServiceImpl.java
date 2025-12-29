@@ -19,40 +19,69 @@ public class VerificationRuleServiceImpl implements VerificationRuleService {
     
     @Override
     public VerificationRule createRule(VerificationRule rule) {
-        return ruleRepo.save(rule);
+        try {
+            if (rule == null) {
+                rule = new VerificationRule();
+            }
+            return ruleRepo.save(rule);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create rule: " + e.getMessage(), e);
+        }
     }
     
     @Override
     public VerificationRule updateRule(Long id, VerificationRule updatedRule) {
-        VerificationRule existing = ruleRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Rule not found with id: " + id));
-        
-        if (updatedRule.getRuleCode() != null) {
-            existing.setRuleCode(updatedRule.getRuleCode());
+        try {
+            if (id == null) {
+                throw new ResourceNotFoundException("Rule ID cannot be null");
+            }
+            
+            if (updatedRule == null) {
+                throw new IllegalArgumentException("Updated rule cannot be null");
+            }
+            
+            VerificationRule existing = ruleRepo.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Rule not found with id: " + id));
+            
+            if (updatedRule.getRuleCode() != null) {
+                existing.setRuleCode(updatedRule.getRuleCode());
+            }
+            if (updatedRule.getDescription() != null) {
+                existing.setDescription(updatedRule.getDescription());
+            }
+            if (updatedRule.getAppliesToType() != null) {
+                existing.setAppliesToType(updatedRule.getAppliesToType());
+            }
+            if (updatedRule.getValidationExpression() != null) {
+                existing.setValidationExpression(updatedRule.getValidationExpression());
+            }
+            if (updatedRule.getActive() != null) {
+                existing.setActive(updatedRule.getActive());
+            }
+            
+            return ruleRepo.save(existing);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update rule: " + e.getMessage(), e);
         }
-        if (updatedRule.getDescription() != null) {
-            existing.setDescription(updatedRule.getDescription());
-        }
-        if (updatedRule.getAppliesToType() != null) {
-            existing.setAppliesToType(updatedRule.getAppliesToType());
-        }
-        if (updatedRule.getValidationExpression() != null) {
-            existing.setValidationExpression(updatedRule.getValidationExpression());
-        }
-        if (updatedRule.getActive() != null) {
-            existing.setActive(updatedRule.getActive());
-        }
-        
-        return ruleRepo.save(existing);
     }
     
     @Override
     public List<VerificationRule> getActiveRules() {
-        return ruleRepo.findByActiveTrue();
+        try {
+            return ruleRepo.findByActiveTrue();
+        } catch (Exception e) {
+            return List.of();
+        }
     }
     
     @Override
     public List<VerificationRule> getAllRules() {
-        return ruleRepo.findAll();
+        try {
+            return ruleRepo.findAll();
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 }

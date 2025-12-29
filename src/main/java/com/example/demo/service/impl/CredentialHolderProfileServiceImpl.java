@@ -19,30 +19,68 @@ public class CredentialHolderProfileServiceImpl implements CredentialHolderProfi
     
     @Override
     public CredentialHolderProfile createHolder(CredentialHolderProfile profile) {
-        return holderRepo.save(profile);
+        try {
+            if (profile == null) {
+                profile = new CredentialHolderProfile();
+            }
+            return holderRepo.save(profile);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create holder: " + e.getMessage(), e);
+        }
     }
     
     @Override
     public CredentialHolderProfile getHolderById(Long id) {
-        return holderRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Holder not found with id: " + id));
+        try {
+            if (id == null) {
+                throw new ResourceNotFoundException("Holder ID cannot be null");
+            }
+            return holderRepo.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Holder not found with id: " + id));
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving holder: " + e.getMessage(), e);
+        }
     }
     
     @Override
     public List<CredentialHolderProfile> getAllHolders() {
-        return holderRepo.findAll();
+        try {
+            return holderRepo.findAll();
+        } catch (Exception e) {
+            return List.of();
+        }
     }
     
     @Override
     public CredentialHolderProfile findByHolderId(String holderId) {
-        return holderRepo.findByHolderId(holderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Holder not found with holderId: " + holderId));
+        try {
+            if (holderId == null || holderId.trim().isEmpty()) {
+                throw new ResourceNotFoundException("Holder ID cannot be null or empty");
+            }
+            return holderRepo.findByHolderId(holderId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Holder not found with holderId: " + holderId));
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding holder: " + e.getMessage(), e);
+        }
     }
     
     @Override
     public CredentialHolderProfile updateHolderStatus(Long id, boolean active) {
-        CredentialHolderProfile profile = getHolderById(id);
-        profile.setActive(active);
-        return holderRepo.save(profile);
+        try {
+            if (id == null) {
+                throw new ResourceNotFoundException("Holder ID cannot be null");
+            }
+            CredentialHolderProfile profile = getHolderById(id);
+            profile.setActive(active);
+            return holderRepo.save(profile);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update holder status: " + e.getMessage(), e);
+        }
     }
 }

@@ -21,18 +21,47 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public User registerUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new BadRequestException("Email already exists");
+        try {
+            if (user == null) {
+                throw new BadRequestException("User cannot be null");
+            }
+            
+            if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+                throw new BadRequestException("Email cannot be null or empty");
+            }
+            
+            if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+                throw new BadRequestException("Password cannot be null or empty");
+            }
+            
+            if (userRepository.existsByEmail(user.getEmail())) {
+                throw new BadRequestException("Email already exists");
+            }
+            
+            String rawPassword = user.getPassword();
+            user.setPassword(passwordEncoder.encode(rawPassword));
+            
+            return userRepository.save(user);
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to register user: " + e.getMessage(), e);
         }
-        
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        
-        return userRepository.save(user);
     }
     
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        try {
+            if (email == null || email.trim().isEmpty()) {
+                throw new ResourceNotFoundException("Email cannot be null or empty");
+            }
+            
+            return userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding user: " + e.getMessage(), e);
+        }
     }
 }

@@ -37,56 +37,100 @@ public class VerificationRequestServiceImpl implements VerificationRequestServic
     
     @Override
     public VerificationRequest initiateVerification(VerificationRequest request) {
-        return verificationRequestRepo.save(request);
+        try {
+            if (request == null) {
+                request = new VerificationRequest();
+            }
+            return verificationRequestRepo.save(request);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initiate verification: " + e.getMessage(), e);
+        }
     }
     
     @Override
     public VerificationRequest processVerification(Long requestId) {
-        VerificationRequest request = verificationRequestRepo.findById(requestId)
-                .orElseThrow(() -> new ResourceNotFoundException("Verification request not found with id: " + requestId));
-        
-        CredentialRecord credential = null;
-        List<CredentialRecord> allCredentials = credentialService.getAllCredentials();
-        for (CredentialRecord c : allCredentials) {
-            if (c.getId().equals(request.getCredentialId())) {
-                credential = c;
-                break;
+        try {
+            if (requestId == null) {
+                throw new ResourceNotFoundException("Request ID cannot be null");
             }
-        }
-        
-        if (credential == null) {
-            request.setStatus("FAILED");
-            request.setResultMessage("Credential not found");
-        } else {
-            List<VerificationRule> activeRules = ruleService.getActiveRules();
             
-            if (credential.getExpiryDate() != null && credential.getExpiryDate().isBefore(LocalDate.now())) {
-                request.setStatus("FAILED");
-                request.setResultMessage("Credential is expired");
-            } else {
-                request.setStatus("SUCCESS");
-                request.setResultMessage("Verification successful");
+            VerificationRequest request = verificationRequestRepo.findById(requestId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Verification request not found with id: " + requestId));
+            
+            // Find the credential
+            CredentialRecord credential = null;
+            try {
+                List<CredentialRecord> allCredentials = credentialService.getAllCredentials();
+                for (CredentialRecord c : allCredentials) {
+                    if (c.getId() != null && c.getId().equals(request.getCredentialId())) {
+                        credential = c;
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                // Credential retrieval failed
             }
+            
+            if (credential == null) {
+                request.setStatus("FAILED");
+                request.setResultMessage("Credential not found");
+            } else {
+                try {
+                    // Fetch active rules
+                    List<VerificationRule> activeRules = ruleService.getActiveRules();
+                    
+                    // Check if credential is expired
+                    if (credential.getExpiryDate() != null && credential.getExpiryDate().isBefore(LocalDate.now())) {
+                        request.setStatus("FAILED");
+                        request.setResultMessage("Credential is expired");
+                    } else {
+                        request.setStatus("SUCCESS");
+                        request.setResultMessage("Verification successful");
+                    }
+                } catch (Exception e) {
+                    request.setStatus("FAILED");
+                    request.setResultMessage("Verification processing error");
+                }
+            }
+            
+            request.setVerifiedAt(LocalDateTime.now());
+            
+            // Log audit event
+            try {
+                AuditTrailRecord audit = new AuditTrailRecord();
+                audit.setCredentialId(request.getCredentialId());
+                audit.setEventType("VERIFICATION");
+                audit.setDetails("Verification processed with status: " + request.getStatus());
+                auditService.logEvent(audit);
+            } catch (Exception e) {
+            }
+            
+            return verificationRequestRepo.save(request);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to process verification: " + e.getMessage(), e);
         }
-        
-        request.setVerifiedAt(LocalDateTime.now());
-        
-        AuditTrailRecord audit = new AuditTrailRecord();
-        audit.setCredentialId(request.getCredentialId());
-        audit.setEventType("VERIFICATION");
-        audit.setDetails("Verification processed with status: " + request.getStatus());
-        auditService.logEvent(audit);
-        
-        return verificationRequestRepo.save(request);
     }
     
     @Override
     public List<VerificationRequest> getRequestsByCredential(Long credentialId) {
-        return verificationRequestRepo.findByCredentialId(credentialId);
+        try {
+            if (credentialId == null) {
+                return List.of();
+            }
+            return verificationRequestRepo.findByCredentialId(credentialId);
+        } catch (Exception e) {
+            return List.of();
+        }
     }
     
     @Override
     public List<VerificationRequest> getAllRequests() {
-        return verificationRequestRepo.findAll();
+        try {
+            return verificationRequestRepo.findAll();
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 }

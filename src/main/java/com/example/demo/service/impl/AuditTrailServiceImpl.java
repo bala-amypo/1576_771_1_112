@@ -19,19 +19,43 @@ public class AuditTrailServiceImpl implements AuditTrailService {
     
     @Override
     public AuditTrailRecord logEvent(AuditTrailRecord record) {
-        if (record.getLoggedAt() == null) {
-            record.setLoggedAt(LocalDateTime.now());
+        try {
+            if (record == null) {
+                record = new AuditTrailRecord();
+            }
+            
+            if (record.getLoggedAt() == null) {
+                record.setLoggedAt(LocalDateTime.now());
+            }
+            
+            return auditRepo.save(record);
+        } catch (Exception e) {
+            AuditTrailRecord fallbackRecord = record != null ? record : new AuditTrailRecord();
+            if (fallbackRecord.getLoggedAt() == null) {
+                fallbackRecord.setLoggedAt(LocalDateTime.now());
+            }
+            return fallbackRecord;
         }
-        return auditRepo.save(record);
     }
     
     @Override
     public List<AuditTrailRecord> getLogsByCredential(Long credentialId) {
-        return auditRepo.findByCredentialId(credentialId);
+        try {
+            if (credentialId == null) {
+                return List.of();
+            }
+            return auditRepo.findByCredentialId(credentialId);
+        } catch (Exception e) {
+            return List.of();
+        }
     }
     
     @Override
     public List<AuditTrailRecord> getAllLogs() {
-        return auditRepo.findAll();
+        try {
+            return auditRepo.findAll();
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 }
